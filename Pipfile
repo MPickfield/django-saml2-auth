@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pysaml2 = "==7.3.0"
-pyjwt = "==2.8.0"
+pyjwt = "==1.7.1"
 dictor = "==0.1.11"
 django = "*"
 

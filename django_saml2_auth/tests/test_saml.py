@@ -379,7 +379,7 @@ def test_get_saml_client_failure_with_invalid_file(settings: SettingsWrapper):
 
 @responses.activate
 def test_decode_saml_response_success(
-    settings: SettingsWrapper, monkeypatch: "MonkeyPatch"
+    settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"
 ):  # type: ignore
     """Test decode_saml_response function to verify if it correctly decodes the SAML response.
 
@@ -427,7 +427,7 @@ def test_extract_user_identity_token_not_required(settings: SettingsWrapper):
 
 @pytest.mark.django_db
 @responses.activate
-def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: "MonkeyPatch"):  # type: ignore
+def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"):  # type: ignore
     """Test Acs view when login_next_url is None in the session"""
     responses.add(responses.GET, METADATA_URL1, body=METADATA1)
     settings.SAML2_AUTH = {
@@ -472,7 +472,7 @@ def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: 
 
 @pytest.mark.django_db
 @responses.activate
-def test_acs_view_when_redirection_state_is_passed_in_relay_state(settings: SettingsWrapper, monkeypatch: "MonkeyPatch"):  # type: ignore
+def test_acs_view_when_redirection_state_is_passed_in_relay_state(settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"):  # type: ignore
     """Test Acs view when login_next_url is None and redirection state in POST request"""
     responses.add(responses.GET, METADATA_URL1, body=METADATA1)
     settings.SAML2_AUTH = {

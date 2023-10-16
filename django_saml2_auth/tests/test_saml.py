@@ -121,7 +121,6 @@ def get_user_identity() -> Mapping[str, List[str]]:
         "user.email": ["test@example.com"],
         "user.first_name": ["John"],
         "user.last_name": ["Doe"],
-        "token": ["TOKEN"],
     }
 
 
@@ -379,7 +378,7 @@ def test_get_saml_client_failure_with_invalid_file(settings: SettingsWrapper):
 
 @responses.activate
 def test_decode_saml_response_success(
-    settings: SettingsWrapper, monkeypatch: "MonkeyPatch"
+    settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"
 ):  # type: ignore
     """Test decode_saml_response function to verify if it correctly decodes the SAML response.
 
@@ -407,18 +406,16 @@ def test_extract_user_identity_success():
     """Test extract_user_identity function to verify if it correctly extracts user identity
     information from a (pysaml2) parsed SAML response."""
     result = extract_user_identity(get_user_identity())  # type: ignore
-    assert len(result) == 6
+    assert len(result) == 5
     assert result["username"] == result["email"] == "test@example.com"
     assert result["first_name"] == "John"
     assert result["last_name"] == "Doe"
-    assert result["token"] == "TOKEN"
     assert result["user_identity"] == get_user_identity()
 
 
 def test_extract_user_identity_token_not_required(settings: SettingsWrapper):
     """Test extract_user_identity function to verify if it correctly extracts user identity
     information from a (pysaml2) parsed SAML response when token is not required."""
-    settings.SAML2_AUTH["TOKEN_REQUIRED"] = False
 
     result = extract_user_identity(get_user_identity())  # type: ignore
     assert len(result) == 5
@@ -427,7 +424,7 @@ def test_extract_user_identity_token_not_required(settings: SettingsWrapper):
 
 @pytest.mark.django_db
 @responses.activate
-def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: "MonkeyPatch"):  # type: ignore
+def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"):  # type: ignore
     """Test Acs view when login_next_url is None in the session"""
     responses.add(responses.GET, METADATA_URL1, body=METADATA1)
     settings.SAML2_AUTH = {
@@ -472,7 +469,7 @@ def test_acs_view_when_next_url_is_none(settings: SettingsWrapper, monkeypatch: 
 
 @pytest.mark.django_db
 @responses.activate
-def test_acs_view_when_redirection_state_is_passed_in_relay_state(settings: SettingsWrapper, monkeypatch: "MonkeyPatch"):  # type: ignore
+def test_acs_view_when_redirection_state_is_passed_in_relay_state(settings: SettingsWrapper, monkeypatch: "pytest.MonkeyPatch"):  # type: ignore
     """Test Acs view when login_next_url is None and redirection state in POST request"""
     responses.add(responses.GET, METADATA_URL1, body=METADATA1)
     settings.SAML2_AUTH = {

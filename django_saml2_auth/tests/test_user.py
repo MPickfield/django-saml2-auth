@@ -2,7 +2,7 @@
 Tests for user.py
 """
 
-from typing import Any, Dict, Union
+from typing import Dict, Union
 
 import pytest
 from django.contrib.auth import get_user_model

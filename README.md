@@ -1,18 +1,3 @@
-# There is no Spoon
-
-This is a fork of https://github.com/grafana/django-saml2-auth with pyjwt downgraded to 1.7.1 so it's compatible with some other packages I needed for a project.
-
-setup
-`brew bundle`
-`pipenv install`
-
-work within your virtual env
-`pipenv shell`
-running tests
-`python -m pytest`
-
-# Readme at time of forking:
-
 # Django SAML2 Authentication
 
 [![PyPI](https://img.shields.io/pypi/v/grafana-django-saml2-auth?label=version&logo=pypi)](https://pypi.org/project/grafana-django-saml2-auth/) [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/grafana/django-saml2-auth/deploy.yml?branch=main&logo=github)](https://github.com/grafana/django-saml2-auth/actions) [![Coveralls](https://img.shields.io/coveralls/github/grafana/django-saml2-auth?logo=coveralls)](https://coveralls.io/github/grafana/django-saml2-auth) [![Downloads](https://pepy.tech/badge/grafana-django-saml2-auth)](https://pepy.tech/project/grafana-django-saml2-auth)
@@ -28,8 +13,10 @@ For IdP-initiated SSO, the user will be created if it doesn't exist. Still, for 
 
 ## Project Information
 
+This is a fork of https://github.com/grafana/django-saml2-auth @ v3.11 with pyjwt removed so that you can manage jwt yourself.
+
 - Original Author: Fang Li ([@fangli](https://github.com/fangli))
-- Maintainer: Mostafa Moradian ([@mostafa](https://github.com/mostafa))
+- Maintainer: Mike Pickfield ([@mpickfield](https://github.com/mpickfield))
 - Version support matrix:
   | **Python** | **Django** | **django-saml2-auth** | **End of Support<br/>(django-saml2-auth)** | **End of extended support<br/>(Django)** |
   | ---------------------------- | ---------- | --------------------- | ------------------------------------------ | ---------------------------------------- |

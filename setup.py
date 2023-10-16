@@ -1,6 +1,6 @@
 """The setup module for django_saml2_auth.
 See:
-https://github.com/grafana/django_saml2_auth
+https://github.com/MPickfield/django-saml2-no-jwt
 """
 
 from codecs import open

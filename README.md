@@ -176,7 +176,6 @@ python setup.py install
            'username': 'user.username',
            'first_name': 'user.first_name',
            'last_name': 'user.last_name',
-           'token': 'Token',  # Mandatory, can be unrequired if TOKEN_REQUIRED is False
            'groups': 'Groups',  # Optional
        },
        'GROUPS_MAP': {  # Optionally allow mapping SAML2 Groups to Django Groups
@@ -193,17 +192,13 @@ python setup.py install
            'GET_USER_ID_FROM_SAML_RESPONSE': 'path.to.your.get.user.from.saml.hook.method',
            # This can override the METADATA_AUTO_CONF_URL to enumerate all existing metadata autoconf URLs
            'GET_METADATA_AUTO_CONF_URLS': 'path.to.your.get.metadata.conf.hook.method',
+           # jwt hooks
+           'CUSTOM_CREATE_JWT': 'path.to.your.create.jwt.method',
+           'CUSTOM_DECODE_JWT':'path.to.your.decode.jwt.method'
        },
        'ASSERTION_URL': 'https://mysite.com',  # Custom URL to validate incoming SAML requests against
        'ENTITY_ID': 'https://mysite.com/saml2_auth/acs/',  # Populates the Issuer element in authn request
        'NAME_ID_FORMAT': FormatString,  # Sets the Format property of authn NameIDPolicy element, e.g. 'user.email'
-       'USE_JWT': True,  # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
-       'JWT_ALGORITHM': 'HS256',  # JWT algorithm to sign the message with
-       'JWT_SECRET': 'your.jwt.secret',  # JWT secret to sign the message with
-       'JWT_PRIVATE_KEY': '--- YOUR PRIVATE KEY ---',  # Private key to sign the message with. The algorithm should be set to RSA256 or a more secure alternative.
-       'JWT_PRIVATE_KEY_PASSPHRASE': 'your.passphrase',  # If your private key is encrypted, you might need to provide a passphrase for decryption
-       'JWT_PUBLIC_KEY': '--- YOUR PUBLIC KEY ---',  # Public key to decode the signed JWT token
-       'JWT_EXP': 60,  # JWT expiry time in seconds
        'FRONTEND_URL': 'https://myfrontendclient.com',  # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
        'LOGIN_CASE_SENSITIVE': True,  # whether of not to get the user in case_sentive mode
        'AUTHN_REQUESTS_SIGNED': True, # Require each authentication request to be signed
@@ -243,7 +238,6 @@ Some of the following settings are related to how this module operates. The rest
 | **CREATE_GROUPS**                       | Determines if a new Django group should be created if the SAML2 Group does not exist                                                                                                                                                                                                                                                                                                                                                                        | `bool`           | `False`                                                                                                                                  |                                                          |
 | **NEW_USER_PROFILE**                    | Default settings for newly created users                                                                                                                                                                                                                                                                                                                                                                                                                    | `dict`           | `{'USER_GROUPS': [], 'ACTIVE_STATUS': True, 'STAFF_STATUS': False, 'SUPERUSER_STATUS': False}`                                           |                                                          |
 | **ATTRIBUTES_MAP**                      | Mapping of Django user attributes to SAML2 user attributes                                                                                                                                                                                                                                                                                                                                                                                                  | `dict`           | `{'email': 'user.email', 'username': 'user.username', 'first_name': 'user.first_name', 'last_name': 'user.last_name', 'token': 'token'}` | `{'your.field': 'SAML.field'}`                           |
-| **TOKEN_REQUIRED**                      | Set this to `False` if you don't require the token parameter in the SAML assertion (in the attributes map)                                                                                                                                                                                                                                                                                                                                                  | `bool`           | `True`                                                                                                                                   |                                                          |
 | **TRIGGER**                             | Hooks to trigger additional actions during user login and creation flows. These `TRIGGER` hooks are strings containing a [dotted module name](https://docs.python.org/3/tutorial/modules.html#packages) which point to a method to be called. The referenced method should accept a single argument: a dictionary of attributes and values sent by the identity provider, representing the user's identity. Triggers will be executed only if they are set. | `dict`           | `{}`                                                                                                                                     |                                                          |
 | **TRIGGER.GET_USER**                    | A method to be called upon getting an existing user. This method will be called before the new user is logged in and is used to customize the retrieval of an existing user record. This method should accept ONE parameter of user dict and return a User model instance or none.                                                                                                                                                                          | `str`            | `None`                                                                                                                                   | `my_app.models.users.get`                                |
 | **TRIGGER.CREATE_USER**                 | A method to be called upon new user creation. This method will be called before the new user is logged in and after the user's record is created. This method should accept ONE parameter of user dict.                                                                                                                                                                                                                                                     | `str`            | `None`                                                                                                                                   | `my_app.models.users.create`                             |
@@ -278,54 +272,7 @@ Some of the following settings are related to how this module operates. The rest
 | **GET_METADATA_AUTO_CONF_URLS**    | Auto SAML2 metadata configuration URL                                                                                                       | get_metadata_auto_conf_urls(user_id: Optional[str] = None) -> Optional[List[Dict[str, str]]] |
 | **GET_USER_ID_FROM_SAML_RESPONSE** | Allows retrieving a user ID before GET_METADATA_AUTO_CONF_URLS gets triggered. Warning: SAML response still not verified. Use with caution! | get_user_id_from_saml_response(saml_response: str, user_id: Optional[str]) -> Optional[str]  |
 
-## JWT Signing Algorithm and Settings
-
-Both symmetric and asymmetric signing functions are [supported](https://pyjwt.readthedocs.io/en/stable/algorithms.html). If you want to use symmetric signing using a secret key, use either of the following algorithms plus a secret key:
-
-- HS256
-- HS384
-- HS512
-
-```python
-{
-    ...
-    'USE_JWT': True,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_SECRET': 'YOU.ULTRA.SECURE.SECRET',
-    ...
-}
-```
-
-Otherwise if you want to use your PKI key-pair to sign JWT tokens, use either of the following algorithms and then set the following fields:
-
-- RS256
-- RS384
-- RS512
-- ES256
-- ES256K
-- ES384
-- ES521
-- ES512
-- PS256
-- PS384
-- PS512
-- EdDSA
-
-```python
-{
-    ...
-    'USE_JWT': True,
-    'JWT_ALGORITHM': 'RS256',
-    'JWT_PRIVATE_KEY': '--- YOUR PRIVATE KEY ---',
-    'JWT_PRIVATE_KEY_PASSPHRASE': 'your.passphrase',  # Optional, if your private key is encrypted
-    'JWT_PUBLIC_KEY': '--- YOUR PUBLIC KEY ---',
-    ...
-}
-```
-
-_Note:_ If both PKI fields and `JWT_SECRET` are defined, the `JWT_ALGORITHM` decides which method to use for signing tokens.
-
-### Custom token triggers
+### jwt token triggers
 
 This is an example of the functions that could be passed to the `TRIGGER.CUSTOM_CREATE_JWT` (it uses the [DRF Simple JWT library](https://github.com/jazzband/djangorestframework-simplejwt/blob/master/docs/index.rst)) and to `TRIGGER.CUSTOM_TOKEN_QUERY`:
 

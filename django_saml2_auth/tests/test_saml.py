@@ -121,7 +121,6 @@ def get_user_identity() -> Mapping[str, List[str]]:
         "user.email": ["test@example.com"],
         "user.first_name": ["John"],
         "user.last_name": ["Doe"],
-        "token": ["TOKEN"],
     }
 
 
@@ -407,18 +406,16 @@ def test_extract_user_identity_success():
     """Test extract_user_identity function to verify if it correctly extracts user identity
     information from a (pysaml2) parsed SAML response."""
     result = extract_user_identity(get_user_identity())  # type: ignore
-    assert len(result) == 6
+    assert len(result) == 5
     assert result["username"] == result["email"] == "test@example.com"
     assert result["first_name"] == "John"
     assert result["last_name"] == "Doe"
-    assert result["token"] == "TOKEN"
     assert result["user_identity"] == get_user_identity()
 
 
 def test_extract_user_identity_token_not_required(settings: SettingsWrapper):
     """Test extract_user_identity function to verify if it correctly extracts user identity
     information from a (pysaml2) parsed SAML response when token is not required."""
-    settings.SAML2_AUTH["TOKEN_REQUIRED"] = False
 
     result = extract_user_identity(get_user_identity())  # type: ignore
     assert len(result) == 5

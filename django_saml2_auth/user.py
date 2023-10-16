@@ -10,15 +10,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, User
 from django_saml2_auth.errors import (
-    CANNOT_DECODE_JWT_TOKEN,
     CREATE_USER_ERROR,
     GROUP_JOIN_ERROR,
-    INVALID_JWT_ALGORITHM,
-    NO_JWT_ALGORITHM,
-    NO_JWT_PRIVATE_KEY,
-    NO_JWT_PUBLIC_KEY,
-    NO_JWT_SECRET,
-    NO_USER_ID,
     SHOULD_NOT_CREATE_USER,
 )
 from django_saml2_auth.exceptions import SAMLAuthError

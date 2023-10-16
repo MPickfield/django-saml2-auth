@@ -1,10 +1,8 @@
 """Utility functions for getting or creating user accounts
 """
 
-from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, Tuple, Union
 
-from cryptography.hazmat.primitives import serialization
 from dictor import dictor  # type: ignore
 from django.conf import settings
 from django.contrib.auth import get_user_model

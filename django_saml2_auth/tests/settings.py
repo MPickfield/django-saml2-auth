@@ -52,7 +52,7 @@ DATABASES = {
 }
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -86,19 +86,14 @@ SAML2_AUTH = {
         "username": "user.username",
         "first_name": "user.first_name",
         "last_name": "user.last_name",
-        "token": "token",
     },
     "TRIGGER": {
         "BEFORE_LOGIN": "django_saml2_auth.tests.test_user.saml_user_setup",
-        "GET_METADATA_AUTO_CONF_URLS": "django_saml2_auth.tests.test_saml.get_metadata_auto_conf_urls",
+        "GET_METADATA_AUTO_CONF_URLS": "django_saml2_auth.tests.test_saml.get_metadata_auto_conf_urls",  # noqa: E501
     },
     "ASSERTION_URL": "https://api.example.com",
     "ENTITY_ID": "https://api.example.com/sso/acs/",
     "NAME_ID_FORMAT": "user.email",
-    "USE_JWT": True,
-    "JWT_SECRET": "JWT_SECRET",
-    "JWT_EXP": 60,
-    "JWT_ALGORITHM": "HS256",
     "FRONTEND_URL": "https://app.example.com/account/login/saml",
     "LOGIN_CASE_SENSITIVE": False,
     "WANT_ASSERTIONS_SIGNED": True,

@@ -7,6 +7,13 @@ from dictor import dictor  # type: ignore
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import NoReverseMatch
+from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity
+from saml2.client import Saml2Client
+from saml2.config import Config as Saml2Config
+from saml2.httpbase import HTTPBase
+from saml2.mdstore import MetaDataExtern
+from saml2.response import AuthnResponse
+
 from django_saml2_auth.errors import (
     ERROR_CREATING_SAML_CONFIG_OR_CLIENT,
     INVALID_METADATA_URL,
@@ -17,18 +24,11 @@ from django_saml2_auth.errors import (
     NO_SAML_CLIENT,
     NO_SAML_RESPONSE_FROM_CLIENT,
     NO_SAML_RESPONSE_FROM_IDP,
-    NO_TOKEN_SPECIFIED,
     NO_USER_IDENTITY_IN_SAML_RESPONSE,
     NO_USERNAME_OR_EMAIL_SPECIFIED,
 )
 from django_saml2_auth.exceptions import SAMLAuthError
 from django_saml2_auth.utils import get_reverse, run_hook
-from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity
-from saml2.client import Saml2Client
-from saml2.config import Config as Saml2Config
-from saml2.httpbase import HTTPBase
-from saml2.mdstore import MetaDataExtern
-from saml2.response import AuthnResponse
 
 
 def get_assertion_url(request: HttpRequest) -> str:
